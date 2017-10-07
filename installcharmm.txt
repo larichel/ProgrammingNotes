@@ -1,0 +1,21 @@
+Installing CHARMM in serial and parallel:
+
+
+1. Install gfortran:
+
+	sudo apt-get install gfortran
+
+2. Install openmpi and its libraries
+
+	sudo apt-get install openmpi-bin libopenmpi-dev
+	tar xvfz charmm.tar.gz
+	cd charmm/
+
+3. First, install charmm in serial:
+
+	./install.com gnu
+
+4. To compile in parallel:
+
+	export OMPI_FC=gfortran
+	./install.com gnu xxlarge M X86_64 mpif90 +REPDSTR +ASYNC_PME +GENCOMM +MSCALE +CMPI
