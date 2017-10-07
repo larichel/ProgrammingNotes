@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# This script extracts time series of total, kinetic, potential E and temp
+# from charmm output (e.g. heat.out) to *dat file and then plot the data in
+# in gnuplot. To execute: ./makeplot filename (e.g. ./makeplot heat if heat.out)
+
+# Extract lines matchine 'DYNA', save columns with time series in $1.dat
+grep 'DYNA>' $1.out | awk '{print $3, $4, $5, $6, $7}' > $1.dat
+
+# Call gnuplot; --persist to avoid autoclose
+gnuplot --persist << EOF
+
+set output '$1.png'
+set multiplot layout 1,2
+set title 'Figure 3a: Energy time series
+set key at 25.7,-500 font 'Helvetica, 10'
+set xlabel 'Time step (ps)' font 'Helvetica, 14'
+set ylabel 'Energy (kcal/mol)' font 'Helvetica, 14'
+set xtics font 'Helvetica, 10'
+set ytics font 'Helvetica, 10'
+plot "$1.dat" u 1:2 w lp title 'Total E', "$1.dat" u 1:3 w lp title 'Kinetic E', "$1.dat" u 1:4 w lp title 'Potential E' 
+
+#plot "$1.dat" u 1:4 w lp title 'Total E' 
+
+set title 'Figure 3b: Temperature time series'
+set xlabel 'Time step (ps)' font 'Helvetica, 14'
+set ylabel 'Temperature (K)' font 'Helvetica, 14'
+plot "$1.dat" u 1:5 w lp 
+unset multiplot
+EOF
